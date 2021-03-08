@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires
+package com.necatisozer.wires.data.repository.remotedatasources
 
-import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import com.necatisozer.wires.data.remote.api.model.Message
 
-@HiltAndroidApp
-class WiresApplication : Application()
+interface PreviousMessagesRemoteDataSource {
+    suspend fun getPreviousMessages(): List<Message>
+}

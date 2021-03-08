@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires
+package com.necatisozer.wires.data.remote.api.model
 
-import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import kotlinx.serialization.Serializable
 
-@HiltAndroidApp
-class WiresApplication : Application()
+@Serializable
+data class Message(
+    val id: String,
+    val text: String,
+    val timestamp: Long,
+    val user: User,
+)

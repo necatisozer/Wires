@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.necatisozer.wires">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".WiresApplication"
         android:allowBackup="true"

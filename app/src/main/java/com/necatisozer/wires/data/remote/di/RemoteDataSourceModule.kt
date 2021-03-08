@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires
+package com.necatisozer.wires.data.remote.di
 
-import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import com.necatisozer.wires.data.remote.api.PreviousMessagesApi
+import com.necatisozer.wires.data.repository.remotedatasources.PreviousMessagesRemoteDataSource
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-@HiltAndroidApp
-class WiresApplication : Application()
+@Module
+@InstallIn(SingletonComponent::class)
+interface RemoteDataSourceModule {
+    @get:Binds
+    val PreviousMessagesApi.previousMessagesApi: PreviousMessagesRemoteDataSource
+}

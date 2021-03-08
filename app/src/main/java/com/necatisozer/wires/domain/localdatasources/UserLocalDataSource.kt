@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires
+package com.necatisozer.wires.domain.localdatasources
 
-import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
-
-@HiltAndroidApp
-class WiresApplication : Application()
+interface UserLocalDataSource {
+    var nickname: String?
+}

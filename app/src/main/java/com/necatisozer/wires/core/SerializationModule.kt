@@ -13,10 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires
+package com.necatisozer.wires.core
 
-import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
 
-@HiltAndroidApp
-class WiresApplication : Application()
+@Module
+@InstallIn(SingletonComponent::class)
+object SerializationModule {
+    @get:Provides
+    val json: Json = Json.Default
+}
