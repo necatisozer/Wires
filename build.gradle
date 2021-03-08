@@ -16,6 +16,10 @@ buildscript {
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+plugins {
+    id 'com.diffplug.spotless' version '5.7.0'
+}
+
+subprojects {
+    apply from: "$project.rootDir/spotless/spotless.gradle"
 }
