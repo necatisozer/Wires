@@ -15,6 +15,10 @@
  */
 package com.necatisozer.wires.domain.localdatasources
 
+import com.necatisozer.wires.domain.model.User
+
 interface UserLocalDataSource {
-    var nickname: String?
+    suspend fun getUser(): User?
+    suspend fun setUser(user: User)
+    suspend fun removeUser()
 }

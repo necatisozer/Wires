@@ -15,12 +15,34 @@
  */
 package com.necatisozer.wires.data.local.preferences
 
+import com.necatisozer.wires.core.di.IoDispatcher
 import com.necatisozer.wires.domain.localdatasources.UserLocalDataSource
+import com.necatisozer.wires.domain.model.User
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import splitties.preferences.Preferences
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserPreferences @Inject constructor() : Preferences("user"), UserLocalDataSource {
-    override var nickname: String? by StringOrNullPref("nickname")
+class UserPreferences @Inject constructor(
+    private val json: Json,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+) : Preferences("user"), UserLocalDataSource {
+    private var userPref = StringOrNullPref("user")
+
+    override suspend fun getUser(): User? = withContext(ioDispatcher) {
+        userPref.value?.let { encodedString ->
+            json.decodeFromString(User.serializer(), encodedString)
+        }
+    }
+
+    override suspend fun setUser(user: User) = withContext(ioDispatcher) {
+        userPref.value = json.encodeToString(User.serializer(), user)
+    }
+
+    override suspend fun removeUser() = withContext(ioDispatcher) {
+        userPref.value = null
+    }
 }

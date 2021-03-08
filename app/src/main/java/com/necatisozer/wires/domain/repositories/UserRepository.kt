@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires.data.repository.localdatasources
+package com.necatisozer.wires.domain.repositories
 
-import com.necatisozer.wires.domain.model.Message
-import kotlinx.coroutines.flow.Flow
+import com.necatisozer.wires.domain.model.User
 
-interface MessagesLocalDataSource {
-    val messages: Flow<List<Message>>
-    fun addMessage(message: Message)
-    fun addMessages(messages: List<Message>)
+interface UserRepository {
+    suspend fun createUser(nickname: String): User
+    suspend fun getUser(): User?
+    suspend fun deleteUser()
 }
