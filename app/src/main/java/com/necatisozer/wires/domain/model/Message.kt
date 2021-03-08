@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires.data.remote.api.model
+package com.necatisozer.wires.domain.model
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class User(
+data class Message(
     val id: String,
-    val avatarURL: String,
-    val nickname: String,
+    val text: String,
+    val timestamp: Long,
+    val user: User,
 )

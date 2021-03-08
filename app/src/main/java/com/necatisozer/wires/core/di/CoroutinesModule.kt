@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires.core
+package com.necatisozer.wires.core.di
 
 import dagger.Module
 import dagger.Provides

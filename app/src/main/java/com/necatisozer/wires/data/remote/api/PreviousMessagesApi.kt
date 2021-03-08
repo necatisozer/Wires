@@ -15,10 +15,10 @@
  */
 package com.necatisozer.wires.data.remote.api
 
-import com.necatisozer.wires.core.IoDispatcher
-import com.necatisozer.wires.data.remote.api.model.Message
+import com.necatisozer.wires.core.di.IoDispatcher
 import com.necatisozer.wires.data.remote.api.model.MessagesResponse
 import com.necatisozer.wires.data.repository.remotedatasources.PreviousMessagesRemoteDataSource
+import com.necatisozer.wires.domain.model.Message
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json

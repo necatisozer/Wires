@@ -15,6 +15,7 @@
  */
 package com.necatisozer.wires.data.remote.api.model
 
+import com.necatisozer.wires.domain.model.Message
 import kotlinx.serialization.Serializable
 
 @Serializable

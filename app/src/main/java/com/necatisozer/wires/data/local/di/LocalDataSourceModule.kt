@@ -15,7 +15,9 @@
  */
 package com.necatisozer.wires.data.local.di
 
+import com.necatisozer.wires.data.local.memory.MessagesInMemoryData
 import com.necatisozer.wires.data.local.preferences.UserPreferences
+import com.necatisozer.wires.data.repository.localdatasources.MessagesLocalDataSource
 import com.necatisozer.wires.domain.localdatasources.UserLocalDataSource
 import dagger.Binds
 import dagger.Module
@@ -27,4 +29,7 @@ import dagger.hilt.components.SingletonComponent
 interface LocalDataSourceModule {
     @get:Binds
     val UserPreferences.userPreferences: UserLocalDataSource
+
+    @get:Binds
+    val MessagesInMemoryData.messagesInMemoryData: MessagesLocalDataSource
 }

@@ -15,7 +15,7 @@
  */
 package com.necatisozer.wires.data.repository.remotedatasources
 
-import com.necatisozer.wires.data.remote.api.model.Message
+import com.necatisozer.wires.domain.model.Message
 
 interface PreviousMessagesRemoteDataSource {
     suspend fun getPreviousMessages(): List<Message>
