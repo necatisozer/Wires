@@ -3,6 +3,7 @@
     package="com.necatisozer.wires">
 
     <application
+        android:name=".WiresApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
