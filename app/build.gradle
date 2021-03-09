@@ -63,6 +63,9 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
+    // Navigation
+    implementation "androidx.navigation:navigation-compose:1.0.0-alpha08"
+
     // Splitties
     implementation "com.louiscad.splitties:splitties-preferences:$splitties_version"
 
