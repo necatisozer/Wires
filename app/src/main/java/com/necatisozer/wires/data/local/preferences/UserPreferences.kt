@@ -19,6 +19,9 @@ import com.necatisozer.wires.core.di.IoDispatcher
 import com.necatisozer.wires.domain.localdatasources.UserLocalDataSource
 import com.necatisozer.wires.domain.model.User
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import splitties.preferences.Preferences
@@ -32,11 +35,13 @@ class UserPreferences @Inject constructor(
 ) : Preferences("user"), UserLocalDataSource {
     private var userPref = StringOrNullPref("user")
 
-    override suspend fun getUser(): User? = withContext(ioDispatcher) {
-        userPref.value?.let { encodedString ->
-            json.decodeFromString(User.serializer(), encodedString)
-        }
-    }
+    override val user: Flow<User?>
+        get() = userPref.valueFlow()
+            .map { encodedString ->
+                encodedString ?: return@map null
+                json.decodeFromString(User.serializer(), encodedString)
+            }
+            .flowOn(ioDispatcher)
 
     override suspend fun setUser(user: User) = withContext(ioDispatcher) {
         userPref.value = json.encodeToString(User.serializer(), user)

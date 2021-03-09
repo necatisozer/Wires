@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.necatisozer.wires.core.extension.hiltViewModel
 import com.necatisozer.wires.ui.chat.ChatScreen
 import com.necatisozer.wires.ui.main.HomeScreen
 import com.necatisozer.wires.ui.theme.WiresTheme
@@ -32,7 +33,12 @@ fun WiresApp() {
     WiresTheme {
         Surface(color = MaterialTheme.colors.background) {
             NavHost(navController = navController, startDestination = "home") {
-                composable("home") { HomeScreen(navController) }
+                composable("home") { backStackEntry ->
+                    HomeScreen(
+                        hiltViewModel(backStackEntry),
+                        navController,
+                    )
+                }
                 composable("chat") { ChatScreen(navController) }
             }
         }

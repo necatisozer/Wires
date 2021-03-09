@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires.domain.repositories
+package com.necatisozer.wires.ui.main
 
+import androidx.lifecycle.ViewModel
 import com.necatisozer.wires.domain.model.User
+import com.necatisozer.wires.domain.repositories.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-interface UserRepository {
-    val user: Flow<User?>
-    suspend fun createUser(nickname: String): User
-    suspend fun deleteUser()
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    userRepository: UserRepository,
+) : ViewModel() {
+    val user: Flow<User?> = userRepository.user
 }

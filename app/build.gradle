@@ -65,6 +65,7 @@ dependencies {
 
     // Navigation
     implementation "androidx.navigation:navigation-compose:1.0.0-alpha08"
+    implementation 'androidx.hilt:hilt-navigation:1.0.0-alpha03'
 
     // Splitties
     implementation "com.louiscad.splitties:splitties-preferences:$splitties_version"

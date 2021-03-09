@@ -16,9 +16,10 @@
 package com.necatisozer.wires.domain.localdatasources
 
 import com.necatisozer.wires.domain.model.User
+import kotlinx.coroutines.flow.Flow
 
 interface UserLocalDataSource {
-    suspend fun getUser(): User?
+    val user: Flow<User?>
     suspend fun setUser(user: User)
     suspend fun removeUser()
 }

@@ -18,12 +18,15 @@ package com.necatisozer.wires.data.repository
 import com.necatisozer.wires.domain.localdatasources.UserLocalDataSource
 import com.necatisozer.wires.domain.model.User
 import com.necatisozer.wires.domain.repositories.UserRepository
+import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val userLocalDataSource: UserLocalDataSource,
 ) : UserRepository {
+
+    override val user: Flow<User?> get() = userLocalDataSource.user
 
     override suspend fun createUser(nickname: String): User {
         return User(
@@ -34,8 +37,6 @@ class UserRepositoryImpl @Inject constructor(
             userLocalDataSource.setUser(it)
         }
     }
-
-    override suspend fun getUser(): User? = userLocalDataSource.getUser()
 
     override suspend fun deleteUser() = userLocalDataSource.removeUser()
 }

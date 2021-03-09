@@ -44,7 +44,7 @@ class MessagesRepositoryImpl @Inject constructor(
             }
 
     override suspend fun sendMessage(text: String) {
-        val user = userRepository.getUser()
+        val user = userRepository.user.first()
             ?: throw IllegalStateException("User must be created before sending message")
 
         val message = Message(

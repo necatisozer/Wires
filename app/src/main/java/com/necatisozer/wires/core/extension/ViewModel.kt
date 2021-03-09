@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires.domain.repositories
+package com.necatisozer.wires.core.extension
 
-import com.necatisozer.wires.domain.model.User
-import kotlinx.coroutines.flow.Flow
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.HiltViewModelFactory
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 
-interface UserRepository {
-    val user: Flow<User?>
-    suspend fun createUser(nickname: String): User
-    suspend fun deleteUser()
-}
+@Composable
+inline fun <reified T : ViewModel> hiltViewModel(
+    backStackEntry: NavBackStackEntry
+): T = viewModel(factory = HiltViewModelFactory(LocalContext.current, backStackEntry))

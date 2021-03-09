@@ -15,22 +15,29 @@
  */
 package com.necatisozer.wires.ui.main
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
+import com.necatisozer.wires.domain.model.User
 
 @Composable
 fun HomeScreen(
-    @Suppress("UNUSED_PARAMETER") navController: NavController,
+    homeViewModel: HomeViewModel,
+    navController: NavController,
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
+    val userState: State<User?> = homeViewModel.user.collectAsState(initial = null)
+
+    if (userState.value != null) {
+        navController.navigate("chat")
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
         Text(text = "Home")
     }
 }
