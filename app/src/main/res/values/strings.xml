@@ -4,4 +4,6 @@
     <string name="home_nickname_error">Your nickname must contain at least 2 characters</string>
     <string name="home_enter_chat_button">Enter Chat</string>
     <string name="chat_back_content_description">Back</string>
+    <string name="chat_dark_theme_content_description">Dark theme</string>
+    <string name="chat_light_theme_content_description">Light theme</string>
 </resources>

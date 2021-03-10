@@ -17,6 +17,8 @@ package com.necatisozer.wires.ui.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.necatisozer.wires.domain.localdatasources.ThemeLocalDataSource
+import com.necatisozer.wires.domain.model.Theme
 import com.necatisozer.wires.domain.repositories.MessagesRepository
 import com.necatisozer.wires.domain.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +33,7 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(
     private val userRepository: UserRepository,
     messagesRepository: MessagesRepository,
+    private val themeLocalDataSource: ThemeLocalDataSource,
 ) : ViewModel() {
     private val _viewState = MutableStateFlow(ChatViewState())
     val viewState = _viewState.asStateFlow()
@@ -39,14 +42,20 @@ class ChatViewModel @Inject constructor(
         combine(
             userRepository.user,
             messagesRepository.messages,
-        ) { user, messages ->
+            themeLocalDataSource.theme,
+        ) { user, messages, theme ->
             _viewState.value = _viewState.value.copy(
                 nickname = user?.nickname.orEmpty(),
+                theme = theme,
             )
         }.launchIn(viewModelScope)
     }
 
     fun deleteUser() = viewModelScope.launch {
         userRepository.deleteUser()
+    }
+
+    fun setTheme(theme: Theme) = viewModelScope.launch {
+        themeLocalDataSource.setTheme(theme)
     }
 }

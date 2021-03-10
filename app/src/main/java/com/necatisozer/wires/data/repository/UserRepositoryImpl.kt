@@ -15,7 +15,7 @@
  */
 package com.necatisozer.wires.data.repository
 
-import com.necatisozer.wires.domain.localdatasources.UserLocalDataSource
+import com.necatisozer.wires.data.repository.localdatasources.UserLocalDataSource
 import com.necatisozer.wires.domain.model.User
 import com.necatisozer.wires.domain.repositories.UserRepository
 import kotlinx.coroutines.flow.Flow

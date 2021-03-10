@@ -16,38 +16,29 @@
 package com.necatisozer.wires.data.local.preferences
 
 import com.necatisozer.wires.core.di.IoDispatcher
-import com.necatisozer.wires.data.repository.localdatasources.UserLocalDataSource
-import com.necatisozer.wires.domain.model.User
+import com.necatisozer.wires.domain.localdatasources.ThemeLocalDataSource
+import com.necatisozer.wires.domain.model.Theme
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
 import splitties.preferences.Preferences
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserPreferences @Inject constructor(
-    private val json: Json,
+class ThemePreferences @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-) : Preferences("user"), UserLocalDataSource {
-    private var userPref = StringOrNullPref("user")
+) : Preferences("theme"), ThemeLocalDataSource {
+    private var themePref = StringPref("theme", Theme.SYSTEM.name)
 
-    override val user: Flow<User?>
-        get() = userPref.valueFlow()
-            .map { encodedString ->
-                encodedString ?: return@map null
-                json.decodeFromString(User.serializer(), encodedString)
-            }
+    override val theme: Flow<Theme>
+        get() = themePref.valueFlow()
+            .map { Theme.valueOf(it) }
             .flowOn(ioDispatcher)
 
-    override suspend fun setUser(user: User) = withContext(ioDispatcher) {
-        userPref.value = json.encodeToString(User.serializer(), user)
-    }
-
-    override suspend fun removeUser() = withContext(ioDispatcher) {
-        userPref.value = null
+    override suspend fun setTheme(theme: Theme) = withContext(ioDispatcher) {
+        themePref.value = theme.name
     }
 }

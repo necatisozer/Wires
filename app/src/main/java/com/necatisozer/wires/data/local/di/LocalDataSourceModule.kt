@@ -16,9 +16,11 @@
 package com.necatisozer.wires.data.local.di
 
 import com.necatisozer.wires.data.local.memory.MessagesInMemoryData
+import com.necatisozer.wires.data.local.preferences.ThemePreferences
 import com.necatisozer.wires.data.local.preferences.UserPreferences
 import com.necatisozer.wires.data.repository.localdatasources.MessagesLocalDataSource
-import com.necatisozer.wires.domain.localdatasources.UserLocalDataSource
+import com.necatisozer.wires.data.repository.localdatasources.UserLocalDataSource
+import com.necatisozer.wires.domain.localdatasources.ThemeLocalDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -32,4 +34,7 @@ interface LocalDataSourceModule {
 
     @get:Binds
     val MessagesInMemoryData.messagesInMemoryData: MessagesLocalDataSource
+
+    @get:Binds
+    val ThemePreferences.themePreferences: ThemeLocalDataSource
 }

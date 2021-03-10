@@ -18,10 +18,16 @@ package com.necatisozer.wires.ui
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.necatisozer.wires.core.extension.hiltViewModel
+import com.necatisozer.wires.domain.model.Theme
+import com.necatisozer.wires.domain.model.Theme.SYSTEM
+import com.necatisozer.wires.domain.model.isDarkTheme
 import com.necatisozer.wires.ui.chat.ChatScreen
 import com.necatisozer.wires.ui.main.HomeScreen
 import com.necatisozer.wires.ui.theme.WiresTheme
@@ -29,8 +35,11 @@ import com.necatisozer.wires.ui.theme.WiresTheme
 @Composable
 fun WiresApp() {
     val navController = rememberNavController()
+    val wiresViewModel: WiresViewModel = viewModel()
 
-    WiresTheme {
+    val themeState: State<Theme> = wiresViewModel.theme.collectAsState(initial = SYSTEM)
+
+    WiresTheme(darkTheme = themeState.value.isDarkTheme()) {
         Surface(color = MaterialTheme.colors.background) {
             NavHost(navController = navController, startDestination = "home") {
                 composable("home") { backStackEntry ->

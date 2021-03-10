@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires.ui.chat
+package com.necatisozer.wires.ui
 
+import androidx.lifecycle.ViewModel
+import com.necatisozer.wires.domain.localdatasources.ThemeLocalDataSource
 import com.necatisozer.wires.domain.model.Theme
-import com.necatisozer.wires.domain.model.Theme.SYSTEM
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-data class ChatViewState(
-    val nickname: String = "",
-    val theme: Theme = SYSTEM,
-)
+@HiltViewModel
+class WiresViewModel @Inject constructor(
+    themeLocalDataSource: ThemeLocalDataSource,
+) : ViewModel() {
+    val theme: Flow<Theme> = themeLocalDataSource.theme
+}

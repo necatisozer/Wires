@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires.ui.chat
+package com.necatisozer.wires.data.repository.localdatasources
 
-import com.necatisozer.wires.domain.model.Theme
-import com.necatisozer.wires.domain.model.Theme.SYSTEM
+import com.necatisozer.wires.domain.model.User
+import kotlinx.coroutines.flow.Flow
 
-data class ChatViewState(
-    val nickname: String = "",
-    val theme: Theme = SYSTEM,
-)
+interface UserLocalDataSource {
+    val user: Flow<User?>
+    suspend fun setUser(user: User)
+    suspend fun removeUser()
+}

@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires.domain.localdatasources
+package com.necatisozer.wires.domain.model
 
-import com.necatisozer.wires.domain.model.User
-import kotlinx.coroutines.flow.Flow
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 
-interface UserLocalDataSource {
-    val user: Flow<User?>
-    suspend fun setUser(user: User)
-    suspend fun removeUser()
+enum class Theme { SYSTEM, LIGHT, DARK }
+
+@Composable
+fun Theme.isDarkTheme() = when (this) {
+    Theme.SYSTEM -> isSystemInDarkTheme()
+    Theme.LIGHT -> false
+    Theme.DARK -> true
 }

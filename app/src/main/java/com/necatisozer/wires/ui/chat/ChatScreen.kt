@@ -15,6 +15,7 @@
  */
 package com.necatisozer.wires.ui.chat
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,11 +23,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.IconToggleButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.WbIncandescent
+import androidx.compose.material.icons.outlined.WbIncandescent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -36,6 +40,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.necatisozer.wires.R
+import com.necatisozer.wires.domain.model.Theme.DARK
+import com.necatisozer.wires.domain.model.Theme.LIGHT
+import com.necatisozer.wires.domain.model.isDarkTheme
 
 @Composable
 fun ChatScreen(
@@ -53,6 +60,11 @@ fun ChatScreen(
                 chatViewModel.deleteUser()
                 navController.popBackStack()
             },
+            isDarkTheme = viewState.value.theme.isDarkTheme(),
+            onThemeChange = { isDarkTheme ->
+                val theme = if (isDarkTheme) DARK else LIGHT
+                chatViewModel.setTheme(theme)
+            },
         )
     }
 }
@@ -62,6 +74,8 @@ fun ChatAppBar(
     title: String,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
+    isDarkTheme: Boolean,
+    onThemeChange: (isDarkTheme: Boolean) -> Unit,
 ) {
     TopAppBar(
         modifier = modifier,
@@ -86,5 +100,22 @@ fun ChatAppBar(
                 )
             }
         },
+        actions = {
+            IconToggleButton(checked = isDarkTheme, onCheckedChange = onThemeChange) {
+                Crossfade(targetState = isDarkTheme) { isDarkTheme ->
+                    if (isDarkTheme) {
+                        Icon(
+                            Icons.Outlined.WbIncandescent,
+                            contentDescription = stringResource(R.string.chat_dark_theme_content_description),
+                        )
+                    } else {
+                        Icon(
+                            Icons.Filled.WbIncandescent,
+                            contentDescription = stringResource(R.string.chat_light_theme_content_description),
+                        )
+                    }
+                }
+            }
+        }
     )
 }
