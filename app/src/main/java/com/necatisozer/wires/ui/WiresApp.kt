@@ -39,7 +39,12 @@ fun WiresApp() {
                         navController,
                     )
                 }
-                composable("chat") { ChatScreen(navController) }
+                composable("chat") { backStackEntry ->
+                    ChatScreen(
+                        hiltViewModel(backStackEntry),
+                        navController,
+                    )
+                }
             }
         }
     }
