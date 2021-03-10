@@ -3,6 +3,7 @@ buildscript {
         compose_version = '1.0.0-beta01'
         hilt_version = '2.33-beta'
         splitties_version = '3.0.0-beta01'
+        accompanist_version = '0.6.1'
     }
 
     repositories {

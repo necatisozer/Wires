@@ -70,9 +70,13 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     implementation 'androidx.hilt:hilt-navigation:1.0.0-alpha03'
-    
+
     // Splitties
     implementation "com.louiscad.splitties:splitties-preferences:$splitties_version"
+
+    // Accompanist
+    implementation "dev.chrisbanes.accompanist:accompanist-coil:$accompanist_version"
+    implementation "dev.chrisbanes.accompanist:accompanist-insets:$accompanist_version"
 
     testImplementation 'junit:junit:4.13.2'
 

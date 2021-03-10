@@ -45,7 +45,8 @@ class ChatViewModel @Inject constructor(
             themeLocalDataSource.theme,
         ) { user, messages, theme ->
             _viewState.value = _viewState.value.copy(
-                nickname = user?.nickname.orEmpty(),
+                user = user,
+                messages = messages,
                 theme = theme,
             )
         }.launchIn(viewModelScope)

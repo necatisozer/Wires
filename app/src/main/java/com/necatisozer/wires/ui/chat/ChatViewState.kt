@@ -15,10 +15,13 @@
  */
 package com.necatisozer.wires.ui.chat
 
+import com.necatisozer.wires.domain.model.Message
 import com.necatisozer.wires.domain.model.Theme
 import com.necatisozer.wires.domain.model.Theme.SYSTEM
+import com.necatisozer.wires.domain.model.User
 
 data class ChatViewState(
-    val nickname: String = "",
+    val user: User? = null,
+    val messages: List<Message> = emptyList(),
     val theme: Theme = SYSTEM,
 )

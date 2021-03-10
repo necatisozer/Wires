@@ -17,7 +17,7 @@ package com.necatisozer.wires.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+inline val Color.Companion.Mirage get() = Color(0xFF182029)
+inline val Color.Companion.EbonyClay get() = Color(0xFF242D3A)
+inline val Color.Companion.PictonBlue get() = Color(0xFF4C9FEC)
+inline val Color.Companion.Porcelain get() = Color(0xFFEBEEF0)
