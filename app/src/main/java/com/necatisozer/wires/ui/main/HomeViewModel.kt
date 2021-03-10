@@ -16,15 +16,47 @@
 package com.necatisozer.wires.ui.main
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.necatisozer.wires.domain.model.User
 import com.necatisozer.wires.domain.repositories.UserRepository
+import com.necatisozer.wires.util.NicknameValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    userRepository: UserRepository,
+    private val userRepository: UserRepository,
+    private val nicknameValidator: NicknameValidator,
 ) : ViewModel() {
     val user: Flow<User?> = userRepository.user
+
+    private val _viewState = MutableStateFlow(HomeViewState())
+    val viewState = _viewState.asStateFlow()
+
+    fun onNicknameChange(nickname: String) {
+        _viewState.value = _viewState.value.copy(
+            nickname = nickname,
+            showNicknameError = false,
+        )
+    }
+
+    fun onEnterChatClick() {
+        if (isNickNameValid) {
+            createUser()
+        } else {
+            _viewState.value = _viewState.value.copy(
+                showNicknameError = true,
+            )
+        }
+    }
+
+    private fun createUser() = viewModelScope.launch {
+        userRepository.createUser(viewState.value.nickname)
+    }
+
+    private val isNickNameValid get() = nicknameValidator.isValid(viewState.value.nickname)
 }

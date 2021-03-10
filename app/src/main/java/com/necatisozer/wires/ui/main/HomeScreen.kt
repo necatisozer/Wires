@@ -15,16 +15,29 @@
  */
 package com.necatisozer.wires.ui.main
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import com.necatisozer.wires.R
 import com.necatisozer.wires.domain.model.User
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -32,12 +45,34 @@ fun HomeScreen(
     navController: NavController,
 ) {
     val userState: State<User?> = homeViewModel.user.collectAsState(initial = null)
+    val viewState: State<HomeViewState> = homeViewModel.viewState.collectAsState()
 
     if (userState.value != null) {
         navController.navigate("chat")
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(text = "Home")
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        OutlinedTextField(
+            value = viewState.value.nickname,
+            onValueChange = homeViewModel::onNicknameChange,
+            label = { Text(stringResource(R.string.home_nickname_label)) },
+            singleLine = true,
+            isError = viewState.value.showNicknameError,
+        )
+        AnimatedVisibility(visible = viewState.value.showNicknameError) {
+            Text(
+                text = stringResource(id = R.string.home_nickname_error),
+                color = MaterialTheme.colors.error,
+                fontSize = 12.sp,
+            )
+        }
+        Spacer(modifier = Modifier.height(32.dp))
+        Button(onClick = homeViewModel::onEnterChatClick) {
+            Text(text = stringResource(id = R.string.home_enter_chat_button).toUpperCase(Locale.getDefault()))
+        }
     }
 }
