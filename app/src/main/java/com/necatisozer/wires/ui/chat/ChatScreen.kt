@@ -204,21 +204,80 @@ fun Messages(
         itemsIndexed(messages) { index, message ->
             val userOfPreviousMessage = messages.getOrNull(index - 1)?.user
             val userOfNextMessage = messages.getOrNull(index + 1)?.user
+            val isFirstMessageOfBlock = userOfPreviousMessage != message.user
+            val isLastMessageOfBlock = userOfNextMessage != message.user
+            val isOwnMessage = message.user.id == user?.id
 
-            Message(
-                message = message,
-                isUserMe = message.user.id == user?.id,
-                isFirstMessageOfBlock = userOfPreviousMessage != message.user,
-                isLastMessageOfBlock = userOfNextMessage != message.user,
-            )
+            if (isOwnMessage) {
+                OwnMessage(
+                    message = message,
+                    isFirstMessageOfBlock = isFirstMessageOfBlock,
+                    isLastMessageOfBlock = isLastMessageOfBlock,
+                )
+            } else {
+                OtherMessage(
+                    message = message,
+                    isFirstMessageOfBlock = isFirstMessageOfBlock,
+                    isLastMessageOfBlock = isLastMessageOfBlock,
+                )
+            }
         }
     }
 }
 
 @Composable
-fun Message(
+fun OwnMessage(
     message: Message,
-    isUserMe: Boolean,
+    isFirstMessageOfBlock: Boolean,
+    isLastMessageOfBlock: Boolean,
+) {
+    Row(
+        modifier = if (isFirstMessageOfBlock) Modifier.padding(top = 8.dp) else Modifier,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .weight(1f),
+        ) {
+            if (isFirstMessageOfBlock) {
+                Text(
+                    text = message.user.nickname,
+                    style = MaterialTheme.typography.subtitle1,
+                    modifier = Modifier
+                        .paddingFrom(LastBaseline, after = 8.dp)
+                )
+            }
+            MessageBubble(
+                text = message.text,
+                time = message.timestamp.toFormattedTime(),
+                isOwnMessage = true,
+                isFirstMessageOfBlock = isFirstMessageOfBlock,
+                isLastMessageOfBlock = isLastMessageOfBlock,
+            )
+            if (isLastMessageOfBlock) {
+                Spacer(Modifier.height(8.dp))
+            } else {
+                Spacer(Modifier.height(4.dp))
+            }
+        }
+
+        if (isFirstMessageOfBlock) {
+            Avatar(
+                avatarUrl = message.user.avatarURL,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.Top),
+            )
+        } else {
+            Spacer(Modifier.width(74.dp))
+        }
+    }
+}
+
+@Composable
+fun OtherMessage(
+    message: Message,
     isFirstMessageOfBlock: Boolean,
     isLastMessageOfBlock: Boolean,
 ) {
@@ -252,7 +311,7 @@ fun Message(
             MessageBubble(
                 text = message.text,
                 time = message.timestamp.toFormattedTime(),
-                isUserMe = isUserMe,
+                isOwnMessage = false,
                 isFirstMessageOfBlock = isFirstMessageOfBlock,
                 isLastMessageOfBlock = isLastMessageOfBlock,
             )
@@ -288,19 +347,19 @@ fun Avatar(
 fun MessageBubble(
     text: String,
     time: String,
-    isUserMe: Boolean,
+    isOwnMessage: Boolean,
     isFirstMessageOfBlock: Boolean,
     isLastMessageOfBlock: Boolean,
 ) {
     val cardShape = RoundedCornerShape(
-        topStart = if (isFirstMessageOfBlock) 8.dp else 0.dp,
-        topEnd = 8.dp,
-        bottomEnd = 8.dp,
-        bottomStart = if (isLastMessageOfBlock) 8.dp else 0.dp,
+        topStart = if (isFirstMessageOfBlock || isOwnMessage) 8.dp else 0.dp,
+        topEnd = if (isFirstMessageOfBlock || isOwnMessage.not()) 8.dp else 0.dp,
+        bottomStart = if (isLastMessageOfBlock || isOwnMessage) 8.dp else 0.dp,
+        bottomEnd = if (isLastMessageOfBlock || isOwnMessage.not()) 8.dp else 0.dp,
     )
 
     val cardBackgroundColor = when {
-        isUserMe -> MaterialTheme.colors.primary
+        isOwnMessage -> MaterialTheme.colors.primary
         else -> MaterialTheme.colors.surface
     }
 
