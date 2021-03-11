@@ -28,6 +28,8 @@ private val DarkColorPalette = darkColors(
     secondary = Color.PictonBlue,
     background = Color.Mirage,
     surface = Color.EbonyClay,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
 )
 
 private val LightColorPalette = lightColors(
@@ -36,15 +38,8 @@ private val LightColorPalette = lightColors(
     secondary = Color.PictonBlue,
     background = Color.White,
     surface = Color.Porcelain,
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
     onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+    onSecondary = Color.White,
 )
 
 @Composable

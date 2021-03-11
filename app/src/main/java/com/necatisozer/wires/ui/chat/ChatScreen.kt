@@ -40,6 +40,7 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.IconToggleButton
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
@@ -51,6 +52,7 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.WbIncandescent
 import androidx.compose.material.icons.outlined.WbIncandescent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -80,6 +82,11 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle.SHORT
+import java.util.Locale
 
 @Composable
 fun ChatScreen(
@@ -236,6 +243,7 @@ fun Message(
             }
             MessageBubble(
                 text = message.text,
+                time = message.timestamp.toFormattedTime(),
                 isUserMe = isUserMe,
                 isFirstMessageOfBlock = isFirstMessageOfBlock,
                 isLastMessageOfBlock = isLastMessageOfBlock,
@@ -268,6 +276,7 @@ fun Avatar(
 @Composable
 fun MessageBubble(
     text: String,
+    time: String,
     isUserMe: Boolean,
     isFirstMessageOfBlock: Boolean,
     isLastMessageOfBlock: Boolean,
@@ -288,11 +297,19 @@ fun MessageBubble(
         shape = cardShape,
         backgroundColor = cardBackgroundColor,
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.body1.copy(color = LocalContentColor.current),
-            modifier = Modifier.padding(8.dp),
-        )
+        Column(modifier = Modifier.padding(8.dp)) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.body1.copy(color = LocalContentColor.current),
+            )
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
+                Text(
+                    text = time,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
+        }
     }
 }
 
@@ -353,4 +370,11 @@ fun MessageInput(
             )
         }
     }
+}
+
+private fun Long.toFormattedTime(): String {
+    return DateTimeFormatter.ofLocalizedDateTime(SHORT)
+        .withLocale(Locale.getDefault())
+        .withZone(ZoneId.systemDefault())
+        .format(Instant.ofEpochSecond(this))
 }
