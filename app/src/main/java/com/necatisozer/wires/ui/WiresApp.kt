@@ -24,13 +24,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.necatisozer.wires.core.extension.hiltViewModel
 import com.necatisozer.wires.domain.model.Theme
 import com.necatisozer.wires.domain.model.Theme.SYSTEM
 import com.necatisozer.wires.domain.model.isDarkTheme
 import com.necatisozer.wires.ui.chat.ChatScreen
 import com.necatisozer.wires.ui.main.HomeScreen
 import com.necatisozer.wires.ui.theme.WiresTheme
+import com.necatisozer.wires.util.compose.hiltViewModel
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 
 @Composable

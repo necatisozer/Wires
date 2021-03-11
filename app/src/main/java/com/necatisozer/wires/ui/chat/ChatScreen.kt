@@ -80,6 +80,7 @@ import com.necatisozer.wires.domain.model.Theme.DARK
 import com.necatisozer.wires.domain.model.Theme.LIGHT
 import com.necatisozer.wires.domain.model.User
 import com.necatisozer.wires.domain.model.isDarkTheme
+import com.necatisozer.wires.util.compose.BackPressHandler
 import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
@@ -96,18 +97,22 @@ fun ChatScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    val viewState: State<ChatViewState> = chatViewModel.viewState.collectAsState()
+    val viewState: State<ChatViewState> = chatViewModel.viewState.collectAsState(ChatViewState())
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
+
+    val popBack: () -> Unit = {
+        chatViewModel.deleteUserAndMessages()
+        navController.popBackStack()
+    }
+
+    BackPressHandler(onBackPressed = popBack)
 
     Box(modifier) {
         Column(Modifier.fillMaxSize()) {
             ChatAppBar(
                 title = viewState.value.user?.nickname.orEmpty(),
-                onBackClick = {
-                    chatViewModel.deleteUser()
-                    navController.popBackStack()
-                },
+                onBackClick = popBack,
                 isDarkTheme = viewState.value.theme.isDarkTheme(),
                 onThemeChange = { isDarkTheme ->
                     val theme = if (isDarkTheme) DARK else LIGHT
@@ -125,7 +130,7 @@ fun ChatScreen(
                 onSendClick = {
                     chatViewModel.sendMessage(it)
                     scope.launch {
-                        listState.animateScrollToItem(viewState.value.messages.lastIndex)
+                        listState.animateScrollToItem(viewState.value.messages.size)
                     }
                 },
                 modifier = Modifier.navigationBarsWithImePadding(),

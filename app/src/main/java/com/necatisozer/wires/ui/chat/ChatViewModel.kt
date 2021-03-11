@@ -22,10 +22,7 @@ import com.necatisozer.wires.domain.model.Theme
 import com.necatisozer.wires.domain.repositories.MessagesRepository
 import com.necatisozer.wires.domain.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,24 +32,20 @@ class ChatViewModel @Inject constructor(
     private val messagesRepository: MessagesRepository,
     private val themeLocalDataSource: ThemeLocalDataSource,
 ) : ViewModel() {
-    private val _viewState = MutableStateFlow(ChatViewState())
-    val viewState = _viewState.asStateFlow()
-
-    init {
-        combine(
-            userRepository.user,
-            messagesRepository.messages,
-            themeLocalDataSource.theme,
-        ) { user, messages, theme ->
-            _viewState.value = _viewState.value.copy(
-                user = user,
-                messages = messages,
-                theme = theme,
-            )
-        }.launchIn(viewModelScope)
+    val viewState = combine(
+        userRepository.user,
+        messagesRepository.messages,
+        themeLocalDataSource.theme,
+    ) { user, messages, theme ->
+        ChatViewState(
+            user = user,
+            messages = messages,
+            theme = theme,
+        )
     }
 
-    fun deleteUser() = viewModelScope.launch {
+    fun deleteUserAndMessages() = viewModelScope.launch {
+        messagesRepository.clearMessages()
         userRepository.deleteUser()
     }
 

@@ -38,6 +38,10 @@ class MessagesInMemoryData @Inject constructor() : MessagesLocalDataSource {
         addAll(messages)
     }
 
+    override fun clearMessages() = mutateMessages {
+        clear()
+    }
+
     private fun mutateMessages(mutation: MutableList<Message>.() -> Unit) {
         _messages.value = _messages.value
             .toMutableList()

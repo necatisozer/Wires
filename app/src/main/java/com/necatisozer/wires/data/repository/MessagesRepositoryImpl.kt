@@ -56,4 +56,8 @@ class MessagesRepositoryImpl @Inject constructor(
 
         messagesLocalDataSource.addMessage(message)
     }
+
+    override suspend fun clearMessages() {
+        messagesLocalDataSource.clearMessages()
+    }
 }

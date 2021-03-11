@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.necatisozer.wires.domain.model.User
 import com.necatisozer.wires.domain.repositories.UserRepository
-import com.necatisozer.wires.util.NicknameValidator
+import com.necatisozer.wires.util.validator.NicknameValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

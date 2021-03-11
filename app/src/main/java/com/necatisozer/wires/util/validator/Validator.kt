@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.necatisozer.wires.util
+package com.necatisozer.wires.util.validator
 
 interface Validator<T> {
     fun isValid(value: T): Boolean

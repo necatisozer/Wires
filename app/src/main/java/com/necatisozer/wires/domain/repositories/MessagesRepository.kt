@@ -21,4 +21,5 @@ import kotlinx.coroutines.flow.Flow
 interface MessagesRepository {
     val messages: Flow<List<Message>>
     suspend fun sendMessage(text: String)
+    suspend fun clearMessages()
 }

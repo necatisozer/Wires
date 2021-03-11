@@ -22,4 +22,5 @@ interface MessagesLocalDataSource {
     val messages: Flow<List<Message>>
     fun addMessage(message: Message)
     fun addMessages(messages: List<Message>)
+    fun clearMessages()
 }

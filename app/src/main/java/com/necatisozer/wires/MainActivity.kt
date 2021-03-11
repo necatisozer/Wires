@@ -23,12 +23,14 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.asLiveData
 import com.necatisozer.wires.domain.model.Theme.DARK
 import com.necatisozer.wires.domain.model.Theme.LIGHT
 import com.necatisozer.wires.ui.WiresApp
 import com.necatisozer.wires.ui.WiresViewModel
+import com.necatisozer.wires.util.compose.LocalBackPressedDispatcher
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,7 +42,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         observeTheme()
-        setContent { WiresApp() }
+        setContent {
+            CompositionLocalProvider(
+                LocalBackPressedDispatcher provides onBackPressedDispatcher,
+            ) {
+                WiresApp()
+            }
+        }
     }
 
     private fun observeTheme() {
