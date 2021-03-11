@@ -32,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    messagesRepository: MessagesRepository,
+    private val messagesRepository: MessagesRepository,
     private val themeLocalDataSource: ThemeLocalDataSource,
 ) : ViewModel() {
     private val _viewState = MutableStateFlow(ChatViewState())
@@ -58,5 +58,9 @@ class ChatViewModel @Inject constructor(
 
     fun setTheme(theme: Theme) = viewModelScope.launch {
         themeLocalDataSource.setTheme(theme)
+    }
+
+    fun sendMessage(text: String) = viewModelScope.launch {
+        messagesRepository.sendMessage(text)
     }
 }

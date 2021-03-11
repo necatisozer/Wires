@@ -15,13 +15,15 @@
  */
 package com.necatisozer.wires.ui.chat
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFrom
@@ -32,25 +34,39 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Card
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.LocalContentColor
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.WbIncandescent
 import androidx.compose.material.icons.outlined.WbIncandescent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState.Active
+import androidx.compose.ui.focus.FocusState.Inactive
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.transform.CircleCropTransformation
@@ -61,35 +77,51 @@ import com.necatisozer.wires.domain.model.Theme.LIGHT
 import com.necatisozer.wires.domain.model.User
 import com.necatisozer.wires.domain.model.isDarkTheme
 import dev.chrisbanes.accompanist.coil.CoilImage
+import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
+import kotlinx.coroutines.launch
 
 @Composable
 fun ChatScreen(
     chatViewModel: ChatViewModel,
     navController: NavController,
+    modifier: Modifier = Modifier,
 ) {
     val viewState: State<ChatViewState> = chatViewModel.viewState.collectAsState()
-    val lazyListState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        ChatAppBar(
-            title = viewState.value.user?.nickname.orEmpty(),
-            onBackClick = {
-                chatViewModel.deleteUser()
-                navController.popBackStack()
-            },
-            isDarkTheme = viewState.value.theme.isDarkTheme(),
-            onThemeChange = { isDarkTheme ->
-                val theme = if (isDarkTheme) DARK else LIGHT
-                chatViewModel.setTheme(theme)
-            },
-        )
-        Messages(
-            messages = viewState.value.messages,
-            user = viewState.value.user,
-            lazyListState = lazyListState,
-        )
+    Box(modifier) {
+        Column(Modifier.fillMaxSize()) {
+            ChatAppBar(
+                title = viewState.value.user?.nickname.orEmpty(),
+                onBackClick = {
+                    chatViewModel.deleteUser()
+                    navController.popBackStack()
+                },
+                isDarkTheme = viewState.value.theme.isDarkTheme(),
+                onThemeChange = { isDarkTheme ->
+                    val theme = if (isDarkTheme) DARK else LIGHT
+                    chatViewModel.setTheme(theme)
+                },
+                modifier = Modifier.statusBarsPadding()
+            )
+            Messages(
+                messages = viewState.value.messages,
+                user = viewState.value.user,
+                lazyListState = listState,
+                modifier = Modifier.weight(1f)
+            )
+            MessageInput(
+                onSendClick = {
+                    chatViewModel.sendMessage(it)
+                    scope.launch {
+                        listState.animateScrollToItem(viewState.value.messages.lastIndex)
+                    }
+                },
+                modifier = Modifier.navigationBarsWithImePadding(),
+            )
+        }
     }
 }
 
@@ -149,24 +181,20 @@ fun Messages(
     lazyListState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
+    LazyColumn(
+        modifier = modifier,
+        state = lazyListState,
+    ) {
+        itemsIndexed(messages) { index, message ->
+            val userOfPreviousMessage = messages.getOrNull(index - 1)?.user
+            val userOfNextMessage = messages.getOrNull(index + 1)?.user
 
-    Box(modifier = modifier) {
-        LazyColumn(
-            modifier = Modifier.fillMaxHeight(),
-            state = lazyListState,
-            reverseLayout = true,
-        ) {
-            itemsIndexed(messages) { index, message ->
-                val userOfPreviousMessage = messages.getOrNull(index - 1)?.user
-                val userOfNextMessage = messages.getOrNull(index + 1)?.user
-
-                Message(
-                    message = message,
-                    isUserMe = message.user.id == user?.id,
-                    isFirstMessageOfBlock = userOfPreviousMessage != message.user,
-                    isLastMessageOfBlock = userOfNextMessage != message.user,
-                )
-            }
+            Message(
+                message = message,
+                isUserMe = message.user.id == user?.id,
+                isFirstMessageOfBlock = userOfPreviousMessage != message.user,
+                isLastMessageOfBlock = userOfNextMessage != message.user,
+            )
         }
     }
 }
@@ -209,6 +237,7 @@ fun Message(
             MessageBubble(
                 text = message.text,
                 isUserMe = isUserMe,
+                isFirstMessageOfBlock = isFirstMessageOfBlock,
                 isLastMessageOfBlock = isLastMessageOfBlock,
             )
             if (isLastMessageOfBlock) {
@@ -240,12 +269,15 @@ fun Avatar(
 fun MessageBubble(
     text: String,
     isUserMe: Boolean,
-    isLastMessageOfBlock: Boolean
+    isFirstMessageOfBlock: Boolean,
+    isLastMessageOfBlock: Boolean,
 ) {
-    val cardShape = when {
-        isLastMessageOfBlock -> RoundedCornerShape(0.dp, 8.dp, 8.dp, 0.dp)
-        else -> RoundedCornerShape(0.dp, 8.dp, 8.dp, 8.dp)
-    }
+    val cardShape = RoundedCornerShape(
+        topStart = if (isFirstMessageOfBlock) 8.dp else 0.dp,
+        topEnd = 8.dp,
+        bottomEnd = 8.dp,
+        bottomStart = if (isLastMessageOfBlock) 8.dp else 0.dp,
+    )
 
     val cardBackgroundColor = when {
         isUserMe -> MaterialTheme.colors.primary
@@ -261,5 +293,64 @@ fun MessageBubble(
             style = MaterialTheme.typography.body1.copy(color = LocalContentColor.current),
             modifier = Modifier.padding(8.dp),
         )
+    }
+}
+
+@Composable
+fun MessageInput(
+    onSendClick: (message: String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var textState by remember { mutableStateOf(TextFieldValue()) }
+    var textFieldFocusState by remember { mutableStateOf(Inactive) }
+
+    Box(modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            BasicTextField(
+                value = textState,
+                onValueChange = { textState = it },
+                cursorBrush = SolidColor(LocalContentColor.current),
+                textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+                    .background(
+                        color = MaterialTheme.colors.surface,
+                        shape = RoundedCornerShape(24.dp)
+                    )
+                    .padding(16.dp)
+                    .onFocusChanged { textFieldFocusState = it }
+            )
+
+            AnimatedVisibility(visible = textState.text.isNotBlank()) {
+                IconButton(
+                    onClick = {
+                        onSendClick(textState.text)
+                        textState = TextFieldValue()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Send,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.primary,
+                    )
+                }
+            }
+        }
+
+        val disableContentColor = MaterialTheme.colors.onSurface
+            .copy(alpha = ContentAlpha.disabled)
+        if (textState.text.isEmpty() && textFieldFocusState != Active) {
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(start = 24.dp),
+                text = stringResource(R.string.chat_type_a_message_placeholder),
+                style = MaterialTheme.typography.body1.copy(color = disableContentColor)
+            )
+        }
     }
 }

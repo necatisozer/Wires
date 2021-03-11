@@ -31,6 +31,7 @@ import com.necatisozer.wires.domain.model.isDarkTheme
 import com.necatisozer.wires.ui.chat.ChatScreen
 import com.necatisozer.wires.ui.main.HomeScreen
 import com.necatisozer.wires.ui.theme.WiresTheme
+import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 
 @Composable
 fun WiresApp() {
@@ -39,20 +40,22 @@ fun WiresApp() {
 
     val themeState: State<Theme> = wiresViewModel.theme.collectAsState(initial = SYSTEM)
 
-    WiresTheme(darkTheme = themeState.value.isDarkTheme()) {
-        Surface(color = MaterialTheme.colors.background) {
-            NavHost(navController = navController, startDestination = "home") {
-                composable("home") { backStackEntry ->
-                    HomeScreen(
-                        hiltViewModel(backStackEntry),
-                        navController,
-                    )
-                }
-                composable("chat") { backStackEntry ->
-                    ChatScreen(
-                        hiltViewModel(backStackEntry),
-                        navController,
-                    )
+    ProvideWindowInsets(consumeWindowInsets = false) {
+        WiresTheme(darkTheme = themeState.value.isDarkTheme()) {
+            Surface(color = MaterialTheme.colors.background) {
+                NavHost(navController = navController, startDestination = "home") {
+                    composable("home") { backStackEntry ->
+                        HomeScreen(
+                            hiltViewModel(backStackEntry),
+                            navController,
+                        )
+                    }
+                    composable("chat") { backStackEntry ->
+                        ChatScreen(
+                            hiltViewModel(backStackEntry),
+                            navController,
+                        )
+                    }
                 }
             }
         }

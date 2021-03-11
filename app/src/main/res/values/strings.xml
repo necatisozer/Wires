@@ -7,4 +7,5 @@
     <string name="chat_dark_theme_content_description">Dark theme</string>
     <string name="chat_light_theme_content_description">Light theme</string>
     <string name="chat_avatar_content_description">Avatar</string>
+    <string name="chat_type_a_message_placeholder">Type a message</string>
 </resources>
