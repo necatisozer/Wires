@@ -130,7 +130,7 @@ fun ChatScreen(
                 onSendClick = {
                     chatViewModel.sendMessage(it)
                     scope.launch {
-                        listState.animateScrollToItem(viewState.value.messages.size)
+                        listState.animateScrollToItem(viewState.value.messages.lastIndex)
                     }
                 },
                 modifier = Modifier.navigationBarsWithImePadding(),
