@@ -23,7 +23,7 @@ import com.necatisozer.wires.domain.repositories.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
-import kotlinx.datetime.Clock
+import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
 
@@ -50,7 +50,7 @@ class MessagesRepositoryImpl @Inject constructor(
         val message = Message(
             id = UUID.randomUUID().toString(),
             text = text,
-            timestamp = Clock.System.now().epochSeconds,
+            timestamp = Instant.now().epochSecond,
             user = user,
         )
 

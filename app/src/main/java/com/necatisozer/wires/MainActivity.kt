@@ -17,16 +17,41 @@ package com.necatisozer.wires
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.asLiveData
+import com.necatisozer.wires.domain.model.Theme.DARK
+import com.necatisozer.wires.domain.model.Theme.LIGHT
 import com.necatisozer.wires.ui.WiresApp
+import com.necatisozer.wires.ui.WiresViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private val wiresViewModel: WiresViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        observeTheme()
         setContent { WiresApp() }
+    }
+
+    private fun observeTheme() {
+        wiresViewModel.theme.asLiveData().observe(this) { theme ->
+            AppCompatDelegate.setDefaultNightMode(
+                when (theme) {
+                    LIGHT -> MODE_NIGHT_NO
+                    DARK -> MODE_NIGHT_YES
+                    else -> MODE_NIGHT_FOLLOW_SYSTEM
+                }
+            )
+        }
     }
 }

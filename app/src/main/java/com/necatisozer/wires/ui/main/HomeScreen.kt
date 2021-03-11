@@ -17,10 +17,15 @@ package com.necatisozer.wires.ui.main
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -37,12 +42,15 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.necatisozer.wires.R
 import com.necatisozer.wires.domain.model.User
+import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
 import java.util.Locale
 
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel,
     navController: NavController,
+    modifier: Modifier = Modifier,
 ) {
     val userState: State<User?> = homeViewModel.user.collectAsState(initial = null)
     val viewState: State<HomeViewState> = homeViewModel.viewState.collectAsState()
@@ -51,28 +59,40 @@ fun HomeScreen(
         navController.navigate("chat")
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        OutlinedTextField(
-            value = viewState.value.nickname,
-            onValueChange = homeViewModel::onNicknameChange,
-            label = { Text(stringResource(R.string.home_nickname_label)) },
-            singleLine = true,
-            isError = viewState.value.showNicknameError,
-        )
-        AnimatedVisibility(visible = viewState.value.showNicknameError) {
-            Text(
-                text = stringResource(id = R.string.home_nickname_error),
-                color = MaterialTheme.colors.error,
-                fontSize = 12.sp,
+    Box(modifier) {
+        Column(
+            modifier = Modifier
+                .statusBarsPadding()
+                .navigationBarsWithImePadding()
+                .padding(24.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            OutlinedTextField(
+                value = viewState.value.nickname,
+                onValueChange = homeViewModel::onNicknameChange,
+                label = { Text(stringResource(R.string.home_nickname_label)) },
+                singleLine = true,
+                isError = viewState.value.showNicknameError,
+                modifier = Modifier.fillMaxWidth(),
             )
-        }
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = homeViewModel::onEnterChatClick) {
-            Text(text = stringResource(id = R.string.home_enter_chat_button).toUpperCase(Locale.getDefault()))
+            AnimatedVisibility(visible = viewState.value.showNicknameError) {
+                Text(
+                    text = stringResource(id = R.string.home_nickname_error),
+                    color = MaterialTheme.colors.error,
+                    fontSize = 12.sp,
+                )
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                onClick = homeViewModel::onEnterChatClick,
+                contentPadding = PaddingValues(16.dp),
+                shape = RoundedCornerShape(24.dp),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(text = stringResource(id = R.string.home_enter_chat_button).toUpperCase(Locale.getDefault()))
+            }
         }
     }
 }

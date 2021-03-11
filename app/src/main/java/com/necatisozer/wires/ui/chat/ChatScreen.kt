@@ -18,6 +18,7 @@ package com.necatisozer.wires.ui.chat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Card
@@ -62,6 +64,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusState.Active
 import androidx.compose.ui.focus.FocusState.Inactive
 import androidx.compose.ui.focus.onFocusChanged
@@ -71,7 +74,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.transform.CircleCropTransformation
 import com.necatisozer.wires.R
 import com.necatisozer.wires.domain.model.Message
 import com.necatisozer.wires.domain.model.Theme.DARK
@@ -144,7 +146,9 @@ fun ChatAppBar(
         modifier = modifier,
         title = {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 24.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -221,7 +225,6 @@ fun Message(
                 avatarUrl = message.user.avatarURL,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .size(42.dp)
                     .align(Alignment.Top),
             )
         } else {
@@ -262,15 +265,18 @@ fun Avatar(
     avatarUrl: String,
     modifier: Modifier = Modifier,
 ) {
-    CoilImage(
-        data = avatarUrl,
-        contentDescription = stringResource(R.string.chat_avatar_content_description),
-        fadeIn = true,
-        requestBuilder = {
-            transformations(CircleCropTransformation())
-        },
-        modifier = modifier,
-    )
+    Box(modifier) {
+        CoilImage(
+            data = avatarUrl,
+            contentDescription = stringResource(R.string.chat_avatar_content_description),
+            fadeIn = true,
+            modifier = Modifier
+                .size(42.dp)
+                .border(2.dp, MaterialTheme.colors.primary, CircleShape)
+                .border(4.dp, MaterialTheme.colors.surface, CircleShape)
+                .clip(CircleShape),
+        )
+    }
 }
 
 @Composable
