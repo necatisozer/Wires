@@ -24,4 +24,5 @@ data class ChatViewState(
     val user: User? = null,
     val messages: List<Message> = emptyList(),
     val theme: Theme = SYSTEM,
+    val showError: Boolean = false,
 )

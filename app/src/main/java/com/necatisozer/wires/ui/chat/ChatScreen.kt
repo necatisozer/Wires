@@ -46,6 +46,7 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -80,6 +81,7 @@ import com.necatisozer.wires.domain.model.Theme.DARK
 import com.necatisozer.wires.domain.model.Theme.LIGHT
 import com.necatisozer.wires.domain.model.User
 import com.necatisozer.wires.domain.model.isDarkTheme
+import com.necatisozer.wires.ui.widget.ErrorContent
 import com.necatisozer.wires.util.compose.BackPressHandler
 import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
@@ -108,8 +110,9 @@ fun ChatScreen(
 
     BackPressHandler(onBackPressed = popBack)
 
-    Box(modifier) {
-        Column(Modifier.fillMaxSize()) {
+    Scaffold(
+        modifier = modifier,
+        topBar = {
             ChatAppBar(
                 title = viewState.value.user?.nickname.orEmpty(),
                 onBackClick = popBack,
@@ -118,23 +121,30 @@ fun ChatScreen(
                     val theme = if (isDarkTheme) DARK else LIGHT
                     chatViewModel.setTheme(theme)
                 },
-                modifier = Modifier.statusBarsPadding()
+                modifier = Modifier.statusBarsPadding(),
             )
-            Messages(
-                messages = viewState.value.messages,
-                user = viewState.value.user,
-                lazyListState = listState,
-                modifier = Modifier.weight(1f)
-            )
-            MessageInput(
-                onSendClick = {
-                    chatViewModel.sendMessage(it)
-                    scope.launch {
-                        listState.animateScrollToItem(viewState.value.messages.lastIndex)
-                    }
-                },
-                modifier = Modifier.navigationBarsWithImePadding(),
-            )
+        },
+    ) {
+        if (viewState.value.showError) {
+            ErrorContent(Modifier.fillMaxSize())
+        } else {
+            Column(Modifier.fillMaxSize()) {
+                Messages(
+                    messages = viewState.value.messages,
+                    user = viewState.value.user,
+                    listState = listState,
+                    modifier = Modifier.weight(1f),
+                )
+                MessageInput(
+                    onSendClick = {
+                        chatViewModel.sendMessage(it)
+                        scope.launch {
+                            listState.animateScrollToItem(viewState.value.messages.lastIndex)
+                        }
+                    },
+                    modifier = Modifier.navigationBarsWithImePadding(),
+                )
+            }
         }
     }
 }
@@ -194,12 +204,12 @@ fun ChatAppBar(
 fun Messages(
     messages: List<Message>,
     user: User?,
-    lazyListState: LazyListState,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier,
-        state = lazyListState,
+        state = listState,
     ) {
         itemsIndexed(messages) { index, message ->
             val userOfPreviousMessage = messages.getOrNull(index - 1)?.user

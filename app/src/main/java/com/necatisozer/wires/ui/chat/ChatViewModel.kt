@@ -22,6 +22,7 @@ import com.necatisozer.wires.domain.model.Theme
 import com.necatisozer.wires.domain.repositories.MessagesRepository
 import com.necatisozer.wires.domain.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,6 +43,8 @@ class ChatViewModel @Inject constructor(
             messages = messages,
             theme = theme,
         )
+    }.catch {
+        emit(ChatViewState(showError = true))
     }
 
     fun deleteUserAndMessages() = viewModelScope.launch {
